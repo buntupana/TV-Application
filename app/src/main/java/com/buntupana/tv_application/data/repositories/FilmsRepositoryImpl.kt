@@ -1,6 +1,7 @@
 package com.buntupana.tv_application.data.repositories
 
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.liveData
 import androidx.lifecycle.map
 import com.buntupana.tv_application.data.dao.FavouriteDao
 import com.buntupana.tv_application.data.dao.FilmDao
@@ -80,6 +81,14 @@ class FilmsRepositoryImpl @Inject constructor(
                     }
             }
         )
+    }
+
+    override fun getFavouritesCount(): LiveData<Resource<Int>> {
+        return liveData(Dispatchers.IO) {
+            favouriteDao.getFavouriteCount().map { favouriteCount ->
+                Resource.Success(favouriteCount)
+            }
+        }
     }
 
     override fun getFilm(filmId: String): LiveData<Resource<Film>> {

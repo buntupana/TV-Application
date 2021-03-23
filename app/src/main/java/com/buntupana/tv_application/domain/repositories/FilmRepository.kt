@@ -14,4 +14,6 @@ interface FilmRepository {
     fun setFavourite(filmId: String, favourite: Boolean)
 
     fun getRecommendationList(filmId: String): LiveData<Resource<List<Recommendation>>>
+
+    fun getFavouritesCount(): LiveData<Resource<Int>>
 }
