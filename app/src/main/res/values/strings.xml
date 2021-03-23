@@ -2,4 +2,7 @@
     <string name="app_name">TV-Application</string>
 
     <string name="message_error_connection">Network error, try again</string>
+
+    <string name="menu_item_films">Films</string>
+    <string name="menu_item_favourites">Favourites</string>
 </resources>

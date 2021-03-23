@@ -19,7 +19,9 @@ android {
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
-
+    buildFeatures {
+        viewBinding true
+    }
     buildTypes {
         release {
             minifyEnabled false
@@ -43,6 +45,7 @@ dependencies {
     implementation "androidx.core:core-ktx:$ktx_version"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutines_version"
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines_version"
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
 
     // Jetpack
     kapt "androidx.room:room-compiler:$room_version"
