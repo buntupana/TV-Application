@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">TV-Application</string>
+
+    <string name="message_error_connection">Network error, try again</string>
 </resources>
