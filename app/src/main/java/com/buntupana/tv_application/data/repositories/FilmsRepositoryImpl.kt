@@ -1,12 +1,12 @@
 package com.buntupana.tv_application.data.repositories
 
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.liveData
 import androidx.lifecycle.map
 import com.buntupana.tv_application.data.dao.FavouriteDao
 import com.buntupana.tv_application.data.dao.FilmDao
 import com.buntupana.tv_application.data.dao.RecommendationDao
 import com.buntupana.tv_application.data.datasources.FilmRemoteDataSource
+import com.buntupana.tv_application.data.entities.FavouriteEntity
 import com.buntupana.tv_application.data.entities.FilmRecommendationCrossRef
 import com.buntupana.tv_application.data.resultListLiveData
 import com.buntupana.tv_application.data.resultLiveData
@@ -33,22 +33,40 @@ class FilmsRepositoryImpl @Inject constructor(
     override fun getFilmList(): LiveData<Resource<List<Film>>> {
         return resultListLiveData(
             databaseQuery = {
-                filmDao.getFilmList().map { filmEntityList ->
-                    filmEntityList.map { filmEntity -> FilmModelMapper().apply(filmEntity) }
+                filmDao.getFilmList().map { filmAndFavouriteList ->
+                    filmAndFavouriteList.map { filmAndFavourite ->
+                        FilmModelMapper(
+                            filmAndFavourite.favourite?.favourite ?: false
+                        ).apply(filmAndFavourite.film)
+                    }
                 }
             },
             networkCall = { filmRemoteDataSource.fetchFilmList() },
             saveCallResult = { filmsResponse ->
-                filmsResponse.response.map { FilmEntityMapper().apply(it) }.let {
-                    filmDao.insertFilmList(it)
+                filmsResponse.response.map { FilmEntityMapper().apply(it) }.let { filmEntityList ->
+                    filmDao.insertFilmList(filmEntityList)
+                    filmEntityList.map { filmEntity -> FavouriteEntity(filmEntity.filmId) }
+                        .let { favouriteEntityList ->
+                            favouriteDao.insertFavouriteList(favouriteEntityList)
+                        }
                 }
             }
         )
     }
 
+    override fun getFilmsFavourites(): LiveData<List<Film>> {
+
+        return favouriteDao.getFavouriteList().map { favouriteAndFilmList ->
+            favouriteAndFilmList.map { favouriteAndFilm ->
+                FilmModelMapper(favouriteAndFilm.favourite.favourite).apply(favouriteAndFilm.film)
+            }
+        }
+
+    }
+
     override fun setFavourite(filmId: String, favourite: Boolean) {
         CoroutineScope(Dispatchers.IO).launch {
-            favouriteDao.setFavouriteFilm(filmId, favourite)
+            favouriteDao.setFavourite(filmId, favourite)
         }
     }
 
@@ -83,19 +101,17 @@ class FilmsRepositoryImpl @Inject constructor(
         )
     }
 
-    override fun getFavouritesCount(): LiveData<Resource<Int>> {
-        return liveData(Dispatchers.IO) {
-            favouriteDao.getFavouriteCount().map { favouriteCount ->
-                Resource.Success(favouriteCount.size)
-            }
-        }
+    override fun getFavouritesCount(): LiveData<Int> {
+        return favouriteDao.getFavouriteCount()
     }
 
     override fun getFilm(filmId: String): LiveData<Resource<Film>> {
         return resultLiveData(
             databaseQuery = {
-                filmDao.getFilm(filmId).map { filmEntity ->
-                    FilmModelMapper().apply(filmEntity)
+                filmDao.getFilm(filmId).map { filmAndFavourite ->
+                    FilmModelMapper(filmAndFavourite.favourite?.favourite ?: false).apply(
+                        filmAndFavourite.film
+                    )
                 }
             },
             networkCall = { filmRemoteDataSource.fetchFilm(filmId) },

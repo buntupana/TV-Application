@@ -1,7 +1,6 @@
 package com.buntupana.tv_application.data.utils
 
 import androidx.arch.core.util.Function
-import com.buntupana.tv_application.data.entities.FilmAndFavourite
 import com.buntupana.tv_application.data.entities.FilmEntity
 import com.buntupana.tv_application.data.entities.RecommendationEntity
 import com.buntupana.tv_application.data.raw.FilmRaw
@@ -33,17 +32,17 @@ class FilmEntityMapper : Function<FilmRaw, FilmEntity> {
     }
 }
 
-class FilmModelMapper : Function<FilmAndFavourite, Film> {
-    override fun apply(input: FilmAndFavourite): Film {
+class FilmModelMapper(val favourite: Boolean) : Function<FilmEntity, Film> {
+    override fun apply(input: FilmEntity): Film {
         return Film(
-            input.film.filmId,
-            input.film.title,
-            input.film.coverResource,
-            input.film.slideShowResource,
-            input.film.plot,
-            input.film.duration,
-            input.film.year,
-            input.favourite?.favourite ?: false
+            input.filmId,
+            input.title,
+            input.coverResource,
+            input.slideShowResource,
+            input.plot,
+            input.duration,
+            input.year,
+            favourite
         )
     }
 }

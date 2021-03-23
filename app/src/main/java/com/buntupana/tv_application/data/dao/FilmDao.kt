@@ -23,6 +23,7 @@ interface FilmDao {
     @Query("SELECT * FROM Film")
     fun getFilmList(): LiveData<List<FilmAndFavourite>>
 
+    @Transaction
     @Query("SELECT * FROM Film WHERE filmId LIKE :filmId")
     fun getFilm(filmId: String): LiveData<FilmAndFavourite>
 
