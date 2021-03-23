@@ -6,7 +6,7 @@ import javax.inject.Inject
 
 class GetFilmListUseCase @Inject constructor(
     private val filmRepository: FilmRepository
-) : MediatorEventUseCase<Unit, List<Film>>() {
+) : MediatorUseCase<Unit, List<Film>>() {
 
     override fun execute(parameters: Unit) {
 

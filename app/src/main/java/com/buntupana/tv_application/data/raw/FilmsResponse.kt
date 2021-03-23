@@ -40,8 +40,8 @@ data class FilmRaw(
     val extrafields: List<Extrafield>,
     val flags: Int,
     val genreEntityList: List<GenreEntity>,
-    val genres: List<Int>,
-    val id: Int,
+    val genres: List<Long>,
+    val id: Long,
     val isSecured: Boolean,
     val keywords: String,
     val metadata: List<MetadataX>,
@@ -100,7 +100,7 @@ data class Extrafield(
 
 data class GenreEntity(
     val externalId: String,
-    val id: Int,
+    val id: Long,
     val name: String,
     val parentName: String,
     val responseElementType: String

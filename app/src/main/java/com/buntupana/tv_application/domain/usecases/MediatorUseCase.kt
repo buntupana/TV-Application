@@ -33,5 +33,7 @@ abstract class MediatorEventUseCase<in P, R> {
         return result
     }
 
+    operator fun invoke(params: P) = execute(params)
+
     abstract fun execute(parameters: P)
 }

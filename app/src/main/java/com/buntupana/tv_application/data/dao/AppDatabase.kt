@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import com.buntupana.tv_application.data.entities.FavouriteEntity
 import com.buntupana.tv_application.data.entities.FilmEntity
 import com.buntupana.tv_application.data.entities.FilmRecommendationCrossRef
 import com.buntupana.tv_application.data.entities.RecommendationEntity
@@ -13,7 +14,7 @@ import com.buntupana.tv_application.data.entities.RecommendationEntity
         FilmEntity::class,
         RecommendationEntity::class,
         FilmRecommendationCrossRef::class,
-        RecommendationEntity::class
+        FavouriteEntity::class
     ],
     version = 1, exportSchema = false
 )
@@ -40,7 +41,6 @@ abstract class AppDatabase : RoomDatabase() {
             return Room.databaseBuilder(context, AppDatabase::class.java, DATABASE_NAME)
                 .fallbackToDestructiveMigration()
                 .build()
-
         }
     }
 }

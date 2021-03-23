@@ -19,13 +19,14 @@ interface FilmDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertFilmRecommendationCrossRef(filmRecommendationCrossRefList: List<FilmRecommendationCrossRef>)
 
+    @Transaction()
     @Query("SELECT * FROM Film")
-    suspend fun getFilmList(): LiveData<List<FilmAndFavourite>>
+    fun getFilmList(): LiveData<List<FilmAndFavourite>>
 
     @Query("SELECT * FROM Film WHERE filmId LIKE :filmId")
     fun getFilm(filmId: String): LiveData<FilmAndFavourite>
 
-    @Transaction
+    @Transaction()
     @Query("SELECT * FROM Film WHERE filmId LIKE :filmId")
-    suspend fun getFilmWithRecommendations(filmId: String): LiveData<FilmWithRecommendations>
+    fun getFilmWithRecommendations(filmId: String): LiveData<FilmWithRecommendations>
 }

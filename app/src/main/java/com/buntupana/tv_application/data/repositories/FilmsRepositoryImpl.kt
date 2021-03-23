@@ -56,9 +56,9 @@ class FilmsRepositoryImpl @Inject constructor(
         return resultListLiveData(
             databaseQuery = {
                 filmDao.getFilmWithRecommendations(filmId).map { filmWithRecommendations ->
-                    filmWithRecommendations.recommendationList.map {
+                    filmWithRecommendations.recommendationList.map { recommendationEntity ->
                         RecommendationModelMapper().apply(
-                            it
+                            recommendationEntity
                         )
                     }
                 }
@@ -86,7 +86,7 @@ class FilmsRepositoryImpl @Inject constructor(
     override fun getFavouritesCount(): LiveData<Resource<Int>> {
         return liveData(Dispatchers.IO) {
             favouriteDao.getFavouriteCount().map { favouriteCount ->
-                Resource.Success(favouriteCount)
+                Resource.Success(favouriteCount.size)
             }
         }
     }
