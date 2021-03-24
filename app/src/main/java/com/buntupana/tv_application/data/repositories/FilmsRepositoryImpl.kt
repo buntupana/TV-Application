@@ -17,6 +17,7 @@ import com.buntupana.tv_application.data.utils.RecommendationModelMapper
 import com.buntupana.tv_application.domain.entities.Film
 import com.buntupana.tv_application.domain.entities.Recommendation
 import com.buntupana.tv_application.domain.entities.Resource
+import com.buntupana.tv_application.domain.providers.UrlProvider
 import com.buntupana.tv_application.domain.repositories.FilmRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -27,7 +28,8 @@ class FilmsRepositoryImpl @Inject constructor(
     private val filmRemoteDataSource: FilmRemoteDataSource,
     private val filmDao: FilmDao,
     private val favouriteDao: FavouriteDao,
-    private val recommendationDao: RecommendationDao
+    private val recommendationDao: RecommendationDao,
+    private val urlProvider: UrlProvider
 ) : FilmRepository {
 
     override fun getFilmList(): LiveData<Resource<List<Film>>> {
@@ -36,7 +38,8 @@ class FilmsRepositoryImpl @Inject constructor(
                 filmDao.getFilmList().map { filmAndFavouriteList ->
                     filmAndFavouriteList.map { filmAndFavourite ->
                         FilmModelMapper(
-                            filmAndFavourite.favourite?.favourite ?: false
+                            filmAndFavourite.favourite?.favourite ?: false,
+                            urlProvider.getImageSourceBaseUrl()
                         ).apply(filmAndFavourite.film)
                     }
                 }
@@ -58,7 +61,10 @@ class FilmsRepositoryImpl @Inject constructor(
 
         return favouriteDao.getFavouriteList().map { favouriteAndFilmList ->
             favouriteAndFilmList.map { favouriteAndFilm ->
-                FilmModelMapper(favouriteAndFilm.favourite.favourite).apply(favouriteAndFilm.film)
+                FilmModelMapper(
+                    favouriteAndFilm.favourite.favourite,
+                    urlProvider.getImageSourceBaseUrl()
+                ).apply(favouriteAndFilm.film)
             }
         }
 
@@ -109,7 +115,10 @@ class FilmsRepositoryImpl @Inject constructor(
         return resultLiveData(
             databaseQuery = {
                 filmDao.getFilm(filmId).map { filmAndFavourite ->
-                    FilmModelMapper(filmAndFavourite.favourite?.favourite ?: false).apply(
+                    FilmModelMapper(
+                        filmAndFavourite.favourite?.favourite ?: false,
+                        urlProvider.getImageSourceBaseUrl()
+                    ).apply(
                         filmAndFavourite.film
                     )
                 }

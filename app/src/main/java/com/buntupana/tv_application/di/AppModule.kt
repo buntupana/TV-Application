@@ -8,7 +8,9 @@ import com.buntupana.tv_application.data.dao.FavouriteDao
 import com.buntupana.tv_application.data.dao.FilmDao
 import com.buntupana.tv_application.data.dao.RecommendationDao
 import com.buntupana.tv_application.data.datasources.FilmRemoteDataSource
+import com.buntupana.tv_application.data.providers.UrlProviderImpl
 import com.buntupana.tv_application.data.repositories.FilmsRepositoryImpl
+import com.buntupana.tv_application.domain.providers.UrlProvider
 import com.buntupana.tv_application.domain.repositories.FilmRepository
 import dagger.Module
 import dagger.Provides
@@ -51,12 +53,13 @@ object AppModule {
     @Provides
     fun provideFilmsService(
         okHttpClient: OkHttpClient,
-        moshiConverterFactory: MoshiConverterFactory
+        moshiConverterFactory: MoshiConverterFactory,
+        urlProvider: UrlProvider
     ): FilmsService {
         return provideService(
             okHttpClient,
             FilmsService::class.java,
-            "https://smarttv.orangetv.orange.es/stv/api/",
+            urlProvider.getBaseUrl(),
             moshiConverterFactory
         )
     }
@@ -104,9 +107,21 @@ object AppModule {
         filmRemoteDataSource: FilmRemoteDataSource,
         filmDao: FilmDao,
         recommendationDao: RecommendationDao,
-        favouriteDao: FavouriteDao
-
+        favouriteDao: FavouriteDao,
+        urlProvider: UrlProvider
     ): FilmRepository {
-        return FilmsRepositoryImpl(filmRemoteDataSource, filmDao, favouriteDao, recommendationDao)
+        return FilmsRepositoryImpl(
+            filmRemoteDataSource,
+            filmDao,
+            favouriteDao,
+            recommendationDao,
+            urlProvider
+        )
+    }
+
+    @Singleton
+    @Provides
+    fun provideUrlProvider(): UrlProvider {
+        return UrlProviderImpl()
     }
 }

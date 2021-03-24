@@ -32,13 +32,16 @@ class FilmEntityMapper : Function<FilmRaw, FilmEntity> {
     }
 }
 
-class FilmModelMapper(val favourite: Boolean) : Function<FilmEntity, Film> {
+class FilmModelMapper(
+    private val favourite: Boolean,
+    private val imageResourceBaseUrl: String
+) : Function<FilmEntity, Film> {
     override fun apply(input: FilmEntity): Film {
         return Film(
             input.filmId,
             input.title,
-            input.coverResource,
-            input.slideShowResource,
+            imageResourceBaseUrl + input.coverResource,
+            imageResourceBaseUrl + input.slideShowResource,
             input.plot,
             input.duration,
             input.year,
