@@ -8,5 +8,6 @@ data class Film(
     val plot: String,
     val duration: Long,
     val year: Int,
-    val favourite: Boolean
+    val favourite: Boolean,
+    val categoryList: List<Category>
 )

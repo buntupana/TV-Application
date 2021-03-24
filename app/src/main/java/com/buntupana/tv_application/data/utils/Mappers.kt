@@ -1,10 +1,14 @@
 package com.buntupana.tv_application.data.utils
 
 import androidx.arch.core.util.Function
+import com.buntupana.tv_application.data.entities.CategoryEntity
+import com.buntupana.tv_application.data.entities.FavouriteEntity
 import com.buntupana.tv_application.data.entities.FilmEntity
 import com.buntupana.tv_application.data.entities.RecommendationEntity
 import com.buntupana.tv_application.data.raw.FilmRaw
+import com.buntupana.tv_application.data.raw.GenreEntity
 import com.buntupana.tv_application.data.raw.RecommendationRaw
+import com.buntupana.tv_application.domain.entities.Category
 import com.buntupana.tv_application.domain.entities.Film
 import com.buntupana.tv_application.domain.entities.Recommendation
 
@@ -33,10 +37,14 @@ class FilmEntityMapper : Function<FilmRaw, FilmEntity> {
 }
 
 class FilmModelMapper(
-    private val favourite: Boolean,
+    private val favourite: FavouriteEntity?,
+    private val categoryList: List<CategoryEntity>,
     private val imageResourceBaseUrl: String
 ) : Function<FilmEntity, Film> {
     override fun apply(input: FilmEntity): Film {
+
+        val categoryList = categoryList.map { Category(it.categoryId, it.name) }
+
         return Film(
             input.filmId,
             input.title,
@@ -45,7 +53,8 @@ class FilmModelMapper(
             input.plot,
             input.duration,
             input.year,
-            favourite
+            favourite?.favourite ?: false,
+            categoryList
         )
     }
 }
@@ -72,5 +81,13 @@ class RecommendationEntityMapper : Function<RecommendationRaw, RecommendationEnt
             input.name,
             cover
         )
+    }
+}
+
+class CategoryEntityMapper : Function<GenreEntity, CategoryEntity> {
+    override fun apply(input: GenreEntity): CategoryEntity {
+        var category = input.name.replace("Cine ", "")
+        category = category.replace("Ciena ", "")
+        return CategoryEntity(input.id, category)
     }
 }

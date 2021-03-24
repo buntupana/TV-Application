@@ -2,7 +2,7 @@ package com.buntupana.tv_application.data.dao
 
 import androidx.lifecycle.LiveData
 import androidx.room.*
-import com.buntupana.tv_application.data.entities.FavouriteAndFilm
+import com.buntupana.tv_application.data.entities.FavouriteAndFilmAndCategories
 import com.buntupana.tv_application.data.entities.FavouriteEntity
 
 @Dao
@@ -22,5 +22,5 @@ interface FavouriteDao {
 
     @Transaction
     @Query("SELECT * FROM favourite WHERE favourite = 1")
-    fun getFavouriteList(): LiveData<List<FavouriteAndFilm>>
+    fun getFavouriteList(): LiveData<List<FavouriteAndFilmAndCategories>>
 }

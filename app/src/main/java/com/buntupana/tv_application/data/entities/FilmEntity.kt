@@ -23,6 +23,27 @@ data class FilmAndFavourite(
     val favourite: FavouriteEntity?
 )
 
+@Entity(primaryKeys = ["filmId", "categoryId"])
+data class FilmCategoriesCrossRef(
+    val filmId: String,
+    val categoryId: Long
+)
+
+data class FilmAndFavouriteAndCategories(
+    @Embedded val film: FilmEntity,
+    @Relation(
+        parentColumn = "filmId",
+        entityColumn = "filmId"
+    )
+    val favourite: FavouriteEntity?,
+    @Relation(
+        parentColumn = "filmId",
+        entityColumn = "categoryId",
+        associateBy = Junction(FilmCategoriesCrossRef::class)
+    )
+    val categoryList: List<CategoryEntity>
+)
+
 @Entity(primaryKeys = ["filmId", "recommendationId"])
 data class FilmRecommendationCrossRef(
     val filmId: String,

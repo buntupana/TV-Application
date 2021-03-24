@@ -1,8 +1,13 @@
 <resources>
-    <string name="app_name">TV-Application</string>
+    <string name="app_name" translatable="false">Film App</string>
+
+    <string name="search_film_hint">Search Film</string>
 
     <string name="message_error_connection">Network error, try again</string>
+    <string name="message_no_matches">Not matches with that text</string>
 
     <string name="menu_item_films">Films</string>
     <string name="menu_item_favourites">Favourites</string>
+
+    <string name="text_film_year_duration">%1$d – %2$dh %3$dmin</string>
 </resources>

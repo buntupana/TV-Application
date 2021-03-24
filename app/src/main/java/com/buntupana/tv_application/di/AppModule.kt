@@ -3,10 +3,7 @@ package com.buntupana.tv_application.di
 import android.app.Application
 import android.content.Context
 import com.buntupana.tv_application.data.api.FilmsService
-import com.buntupana.tv_application.data.dao.AppDatabase
-import com.buntupana.tv_application.data.dao.FavouriteDao
-import com.buntupana.tv_application.data.dao.FilmDao
-import com.buntupana.tv_application.data.dao.RecommendationDao
+import com.buntupana.tv_application.data.dao.*
 import com.buntupana.tv_application.data.datasources.FilmRemoteDataSource
 import com.buntupana.tv_application.data.providers.UrlProviderImpl
 import com.buntupana.tv_application.data.repositories.FilmsRepositoryImpl
@@ -103,11 +100,16 @@ object AppModule {
 
     @Singleton
     @Provides
+    fun provideCategoryDao(db: AppDatabase) = db.categoryDao()
+
+    @Singleton
+    @Provides
     fun provideFilmRepository(
         filmRemoteDataSource: FilmRemoteDataSource,
         filmDao: FilmDao,
         recommendationDao: RecommendationDao,
         favouriteDao: FavouriteDao,
+        categoryDao: CategoryDao,
         urlProvider: UrlProvider
     ): FilmRepository {
         return FilmsRepositoryImpl(
@@ -115,6 +117,7 @@ object AppModule {
             filmDao,
             favouriteDao,
             recommendationDao,
+            categoryDao,
             urlProvider
         )
     }
