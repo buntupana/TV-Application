@@ -17,7 +17,7 @@ data class RecommendationRaw(
     val prLevel: Int,
     val prName: String,
     val ratersCount: Int,
-    val rating: Int,
+    val rating: Double,
     val recommendationReasons: List<Any>,
     val type: String
 )

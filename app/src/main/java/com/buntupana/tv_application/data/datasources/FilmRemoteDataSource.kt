@@ -18,10 +18,10 @@ class FilmRemoteDataSource @Inject constructor(
     }
 
     suspend fun fetchFilm(filmId: String): Resource<FilmResponse> {
-        return getResult { filmsService.fetchFilm(filmId) }
+        return getResult { filmsService.fetchFilm("${filmId}_PAGE_HD") }
     }
 
     suspend fun fetchRecommendationList(filmId: String): Resource<RecommendationResponse> {
-        return getResult { filmsService.fetchRecommendationList(filmId) }
+        return getResult { filmsService.fetchRecommendationList("external_content_id:$filmId") }
     }
 }

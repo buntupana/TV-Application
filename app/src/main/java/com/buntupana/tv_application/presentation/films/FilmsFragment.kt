@@ -9,6 +9,7 @@ import android.widget.Toast
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.Navigation
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.DividerItemDecoration
 import com.buntupana.tv_application.R
@@ -16,14 +17,13 @@ import com.buntupana.tv_application.databinding.FragmentFilmsBinding
 import com.buntupana.tv_application.databinding.ItemFilmBinding
 import com.buntupana.tv_application.databinding.ItemFilmFavoriteBinding
 import com.buntupana.tv_application.domain.entities.Resource
-import com.buntupana.tv_application.presentation.common.FilmListBindingAdapter
+import com.buntupana.tv_application.presentation.home.HomeFragmentDirections
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class FilmsFragment : Fragment(), FilmListBindingAdapter.OnFilmItemClickListener,
-    FilmListBindingAdapter.OnFavouriteFilmItemClickListener {
+class FilmsFragment : Fragment(), FilmListBindingAdapter.OnFilmItemClickListener {
 
     @Inject
     lateinit var filmsViewModelAssistedFactory: FilmsViewModel.AssistedFactory
@@ -38,6 +38,11 @@ class FilmsFragment : Fragment(), FilmListBindingAdapter.OnFilmItemClickListener
         FilmListBindingAdapter<ItemFilmFavoriteBinding>(R.layout.item_film_favorite)
 
     private val args: FilmsFragmentArgs by navArgs()
+
+    private val navController by lazy {
+        val navView = requireActivity().findViewById<View>(R.id.nav_host_fragment)
+        Navigation.findNavController(navView)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -60,7 +65,7 @@ class FilmsFragment : Fragment(), FilmListBindingAdapter.OnFilmItemClickListener
             }
             FilmsViewModel.TypeScreen.FAVOURITES -> {
                 binding.recyclerFilm.adapter = adapterFavourites
-                adapterFavourites.listenerFavourite = this
+                adapterFavourites.listenerFilm = this
                 binding.swipeRefresh.isEnabled = false
             }
         }
@@ -148,18 +153,13 @@ class FilmsFragment : Fragment(), FilmListBindingAdapter.OnFilmItemClickListener
         }
     }
 
-    override fun onItemClick(binding: ItemFilmBinding, position: Int) {
-        Timber.d("onItemClick() called with: binding = [$binding], position = [$position]")
-        Toast.makeText(requireContext(), "Item $position clicked", Toast.LENGTH_SHORT).show()
+    override fun onItemClick(filmId: String) {
+        Timber.d("onItemClick() called with: flimId = [$filmId]")
+        navController.navigate(HomeFragmentDirections.actionHomeFragmentToDetailFragment(filmId))
     }
 
     override fun onFavouriteClick(favorite: Boolean, position: Int) {
         Timber.d("onFavouriteClick() called with: favorite = [$favorite], position = [$position]")
         viewModel.setFavourite(favorite, position)
-    }
-
-    override fun onItemClick(binding: ItemFilmFavoriteBinding, position: Int) {
-        Timber.d("onItemClick() called with: binding = [$binding], position = [$position]")
-        Toast.makeText(requireContext(), "Item $position clicked", Toast.LENGTH_SHORT).show()
     }
 }

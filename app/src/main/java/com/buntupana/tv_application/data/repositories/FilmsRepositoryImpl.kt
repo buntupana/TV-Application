@@ -8,6 +8,7 @@ import com.buntupana.tv_application.data.dao.FilmDao
 import com.buntupana.tv_application.data.dao.RecommendationDao
 import com.buntupana.tv_application.data.datasources.FilmRemoteDataSource
 import com.buntupana.tv_application.data.entities.FavouriteEntity
+import com.buntupana.tv_application.data.entities.FilmCategoriesCrossRef
 import com.buntupana.tv_application.data.entities.FilmRecommendationCrossRef
 import com.buntupana.tv_application.data.resultListLiveData
 import com.buntupana.tv_application.data.resultLiveData
@@ -55,6 +56,12 @@ class FilmsRepositoryImpl @Inject constructor(
                         }
                 }
                 // Creating a full list of CategoryList
+                filmsResponse.response.flatMap { filmRaw ->
+                    filmRaw.genreEntityList.map { it.id }
+                        .map { FilmCategoriesCrossRef(filmRaw.assetExternalId, it) }
+                }.let {
+                    filmDao.insertFilmCategoriesCrossRef(it)
+                }
                 filmsResponse.response.flatMap { filmRaw -> filmRaw.genreEntityList }
                     .let { genreEntityList ->
                         genreEntityList.map { CategoryEntityMapper().apply(it) }
@@ -90,7 +97,7 @@ class FilmsRepositoryImpl @Inject constructor(
             databaseQuery = {
                 filmDao.getFilmWithRecommendations(filmId).map { filmWithRecommendations ->
                     filmWithRecommendations.recommendationList.map { recommendationEntity ->
-                        RecommendationModelMapper().apply(
+                        RecommendationModelMapper(urlProvider.getImageSourceBaseUrl()).apply(
                             recommendationEntity
                         )
                     }
@@ -135,7 +142,13 @@ class FilmsRepositoryImpl @Inject constructor(
             },
             networkCall = { filmRemoteDataSource.fetchFilm(filmId) },
             saveCallResult = { filmResponse ->
-                FilmEntityMapper().apply(filmResponse.response).let { filmEntity ->
+                val filmRaw = filmResponse.response
+                filmRaw.genreEntityList.map { it.id }
+                    .map { FilmCategoriesCrossRef(filmRaw.assetExternalId, it) }.let {
+                        filmDao.insertFilmCategoriesCrossRef(it)
+                    }
+                FilmEntityMapper().apply(filmRaw).let { filmEntity ->
+                    favouriteDao.insertFavourite(FavouriteEntity(filmEntity.filmId, false))
                     filmDao.insertFilm(filmEntity)
                 }
             }

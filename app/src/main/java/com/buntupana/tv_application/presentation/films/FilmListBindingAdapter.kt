@@ -1,4 +1,4 @@
-package com.buntupana.tv_application.presentation.common
+package com.buntupana.tv_application.presentation.films
 
 import android.view.LayoutInflater
 import android.view.View
@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.buntupana.tv_application.R
 import com.buntupana.tv_application.databinding.ItemFilmBinding
 import com.buntupana.tv_application.databinding.ItemFilmFavoriteBinding
-import com.buntupana.tv_application.presentation.films.FilmEntityView
+import com.buntupana.tv_application.presentation.common.SettDiffCallback
 
 /**
  * ListAdapter for [R.layout.item_film] and [R.layout.item_film_favorite]
@@ -22,7 +22,6 @@ class FilmListBindingAdapter<BINDING : ViewDataBinding>(
 ) : ListAdapter<FilmEntityView, FilmListBindingAdapter<BINDING>.BindingHolder>(SettDiffCallback<FilmEntityView>()) {
 
     var listenerFilm: OnFilmItemClickListener? = null
-    var listenerFavourite: OnFavouriteFilmItemClickListener? = null
 
     init {
         setHasStableIds(true)
@@ -69,30 +68,18 @@ class FilmListBindingAdapter<BINDING : ViewDataBinding>(
         }
 
         override fun onClick(view: View) {
-            if (binding is ItemFilmBinding) {
-                listenerFilm?.onItemClick(binding, adapterPosition)
-            } else if (binding is ItemFilmFavoriteBinding) {
-                listenerFavourite?.onItemClick(binding, adapterPosition)
-            }
+            val filmId = getItem(layoutPosition).id
+            listenerFilm?.onItemClick(filmId)
         }
 
         private fun onFavouriteClick() {
             val item = getItem(layoutPosition)
-            if (binding is ItemFilmBinding) {
-                listenerFilm?.onFavouriteClick(!item.favourite, layoutPosition)
-            } else if (binding is ItemFilmFavoriteBinding) {
-                listenerFavourite?.onFavouriteClick(!item.favourite, layoutPosition)
-            }
+            listenerFilm?.onFavouriteClick(!item.favourite, layoutPosition)
         }
     }
 
     interface OnFilmItemClickListener {
-        fun onItemClick(binding: ItemFilmBinding, position: Int)
-        fun onFavouriteClick(favorite: Boolean, position: Int)
-    }
-
-    interface OnFavouriteFilmItemClickListener {
-        fun onItemClick(binding: ItemFilmFavoriteBinding, position: Int)
+        fun onItemClick(filmId: String)
         fun onFavouriteClick(favorite: Boolean, position: Int)
     }
 }

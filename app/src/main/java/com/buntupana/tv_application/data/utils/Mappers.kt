@@ -25,7 +25,7 @@ class FilmEntityMapper : Function<FilmRaw, FilmEntity> {
             ?: raw.attachments.firstOrNull()?.name ?: ""
 
         return FilmEntity(
-            raw.externalId,
+            raw.assetExternalId,
             raw.name,
             cover,
             slideshow,
@@ -59,12 +59,14 @@ class FilmModelMapper(
     }
 }
 
-class RecommendationModelMapper : Function<RecommendationEntity, Recommendation> {
+class RecommendationModelMapper(
+    private val imageResourceBaseUrl: String
+) : Function<RecommendationEntity, Recommendation> {
     override fun apply(input: RecommendationEntity): Recommendation {
         return Recommendation(
             input.recommendationId,
             input.title,
-            input.imageSource
+            imageResourceBaseUrl + input.imageSource
         )
     }
 }

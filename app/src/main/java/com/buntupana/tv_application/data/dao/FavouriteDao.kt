@@ -9,6 +9,9 @@ import com.buntupana.tv_application.data.entities.FavouriteEntity
 interface FavouriteDao {
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertFavourite(favouriteEntity: FavouriteEntity)
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insertFavouriteList(favouriteEntityList: List<FavouriteEntity>)
 
     @Query("UPDATE favourite SET favourite = :favorite WHERE filmId LIKE :filmId")

@@ -8,17 +8,9 @@ class FilmEntityViewMapper(private val imageResource: String) : Function<Film, F
 
         var durationMin: Int = (input.duration / 1000 / 60).toInt()
         val durationHours: Int = durationMin / 60
-        do {
-            durationMin -= 60
-        } while (durationMin >= 60)
-        var categories = ""
-        input.categoryList.forEachIndexed { index, category ->
-            categories += if (index == 0) {
-                category.name
-            } else {
-                ", ${category.name}"
-            }
-        }
+        durationMin = durationMin.rem(60)
+
+        val categories = input.categoryList.joinToString(", ") { category -> category.name }
 
         return FilmEntityView(
             input.filmId,
