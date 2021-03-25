@@ -100,6 +100,10 @@ class DetailViewModel @AssistedInject constructor(
         }
     }
 
+    fun isRecommendationsListEmpty(): Boolean {
+        return recommendationList.isEmpty()
+    }
+
     data class FilmViewEntity(
         val filmId: String,
         val title: String,

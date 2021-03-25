@@ -110,13 +110,23 @@ class DetailFragment : Fragment(),
             }
         }
         viewModel.recommendationResource.observe(viewLifecycleOwner) { resource ->
-            Timber.d("setupObservers: recommendations result $resource")
+            Timber.d("setupObservers: recommendations result ${resource.getStatusString()}")
             when (resource) {
                 is Resource.Error -> {
-                    Timber.d("ERROR")
+                    binding.progressRecommendations.visibility = View.GONE
+                    if (viewModel.isRecommendationsListEmpty()) {
+                        binding.buttonRecommendationRetry.visibility = View.VISIBLE
+                        binding.textRecommendationError.visibility = View.VISIBLE
+                    }
                 }
-                is Resource.Loading -> Timber.d("LOADING")
+                is Resource.Loading -> {
+                    binding.progressRecommendations.visibility = View.VISIBLE
+                    binding.buttonRecommendationRetry.visibility = View.GONE
+                    binding.textRecommendationError.visibility = View.GONE
+                }
                 is Resource.Success -> {
+                    binding.buttonRecommendationRetry.visibility = View.GONE
+                    binding.textRecommendationError.visibility = View.GONE
                     binding.progressRecommendations.visibility = View.GONE
                     recommendationsAdapter.submitList(resource.data)
                 }

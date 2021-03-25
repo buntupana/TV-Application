@@ -26,7 +26,7 @@ class FilmsViewModel @AssistedInject constructor(
     enum class TypeScreen { FILMS, FAVOURITES }
 
     var searchKey = ""
-    private var filmList: List<Film> = listOf()
+    private var _filmList: List<Film> = listOf()
 
     val filmViewEntityList: LiveData<Resource<List<FilmEntityView>>>
 
@@ -47,7 +47,7 @@ class FilmsViewModel @AssistedInject constructor(
         fun provideFactory(
             assistedFactory: AssistedFactory,
             typeScreen: TypeScreen
-        ): ViewModelProvider.Factory = object : ViewModelProvider.Factory{
+        ): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
             override fun <T : ViewModel?> create(modelClass: Class<T>): T {
                 return assistedFactory.create(typeScreen) as T
             }
@@ -64,10 +64,10 @@ class FilmsViewModel @AssistedInject constructor(
                 Resource.Loading()
             }
             is Resource.Success -> {
-                filmList = resource.data ?: listOf()
+                _filmList = resource.data ?: listOf()
                 // mapping film to filmEntityView
                 resource.data!!.map { film ->
-                    val imageResource = when(typeScreen){
+                    val imageResource = when (typeScreen) {
                         TypeScreen.FILMS -> film.coverResource
                         TypeScreen.FAVOURITES -> film.slideShowResource
                     }
@@ -90,18 +90,21 @@ class FilmsViewModel @AssistedInject constructor(
 
     /** set or un-set favourite film*/
     fun setFavourite(favourite: Boolean, position: Int) {
-        filmList[position].let { film ->
+        _filmList[position].let { film ->
             setFavouriteUseCase(SetFavouriteParameters(film.filmId, favourite))
         }
     }
 
-    /** set */
+    fun isListEmpty(): Boolean {
+        return _filmList.isEmpty()
+    }
+
     fun setInfoAsNoMatchesFound() {
         _infoMessage.value = R.string.message_no_matches
     }
 
     fun setInfoNetWorkProblem() {
-        _infoMessage.value = R.string.message_error_connection
+        _infoMessage.value = R.string.message_error_connection_swipe
     }
 
     fun setInfoNoData() {

@@ -4,6 +4,7 @@
     <string name="search_film_hint">Search Film</string>
 
     <string name="message_error_connection">Network error, try again</string>
+    <string name="message_error_connection_swipe">Network error, swipe down to retry</string>
     <string name="message_no_matches">Not matches with that text</string>
     <string name="message_no_film_data">Sorry, there is no data to show</string>
 

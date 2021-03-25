@@ -115,8 +115,9 @@ class FilmsFragment : Fragment(), FilmListBindingAdapter.OnFilmItemClickListener
                 }
                 is Resource.Loading -> {
                     // showing loading
-                    binding.progressBarFilms.visibility = View.VISIBLE
-                    if (adapterFilms.currentList.isEmpty()) {
+                    Timber.d("setupObservers: Loading")
+                    if (viewModel.isListEmpty()) {
+                        binding.progressBarFilms.visibility = View.VISIBLE
                         binding.searchBox.editSearchKey.isEnabled = false
                     }
                 }

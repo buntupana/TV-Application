@@ -5,6 +5,7 @@ import androidx.lifecycle.liveData
 import androidx.lifecycle.map
 import com.buntupana.tv_application.domain.entities.Resource
 import kotlinx.coroutines.Dispatchers
+import timber.log.Timber
 
 /**
  * The database serves as the single source of truth.
@@ -56,15 +57,16 @@ fun <T, A> resultLiveData(
 fun <T, A> resultListLiveData(
     databaseQuery: () -> LiveData<List<T>>,
     networkCall: suspend () -> Resource<A>,
-    saveCallResult: suspend (A) -> Unit
+    saveCallResult: suspend (A) -> Int
 ): LiveData<Resource<List<T>>> =
     liveData(Dispatchers.IO) {
-
+        Timber.d("resultListLiveData:  launched")
         emit(Resource.Loading())
         var networkLoading = true
         var data: List<T>? = null
 
         val source = databaseQuery.invoke().map {
+            Timber.d("resultListLiveData: data size = ${it.size} network = $networkLoading")
             if (it.isEmpty() && networkLoading) {
                 Resource.Loading()
             } else {
@@ -76,10 +78,13 @@ fun <T, A> resultListLiveData(
         emitSource(source)
 
         val responseStatus = networkCall.invoke()
+        Timber.d("resultListLiveData: network finished")
         networkLoading = false
 
         if (responseStatus is Resource.Success) {
-            saveCallResult(responseStatus.data!!)
+            if (saveCallResult(responseStatus.data!!) == 0) {
+                emit(Resource.Success(listOf()))
+            }
         } else if (responseStatus is Resource.Error) {
             emit(Resource.Error(responseStatus.exception, data))
             emitSource(source)

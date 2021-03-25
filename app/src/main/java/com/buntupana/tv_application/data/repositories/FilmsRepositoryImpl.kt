@@ -47,14 +47,6 @@ class FilmsRepositoryImpl @Inject constructor(
             },
             networkCall = { filmRemoteDataSource.fetchFilmList() },
             saveCallResult = { filmsResponse ->
-                filmsResponse.response.map { FilmEntityMapper().apply(it) }.let { filmEntityList ->
-                    filmDao.insertFilmList(filmEntityList)
-                    // inserting list of favourites
-                    filmEntityList.map { filmEntity -> FavouriteEntity(filmEntity.filmId) }
-                        .let { favouriteEntityList ->
-                            favouriteDao.insertFavouriteList(favouriteEntityList)
-                        }
-                }
                 // Creating a full list of CategoryList
                 filmsResponse.response.flatMap { filmRaw ->
                     filmRaw.genreEntityList.map { it.id }
@@ -69,6 +61,15 @@ class FilmsRepositoryImpl @Inject constructor(
                                 categoryDao.insertCategoryList(categoryEntityList)
                             }
                     }
+                filmsResponse.response.map { FilmEntityMapper().apply(it) }.let { filmEntityList ->
+                    filmDao.insertFilmList(filmEntityList)
+                    // inserting list of favourites
+                    filmEntityList.map { filmEntity -> FavouriteEntity(filmEntity.filmId) }
+                        .let { favouriteEntityList ->
+                            favouriteDao.insertFavouriteList(favouriteEntityList)
+                        }
+                    filmEntityList.size
+                }
             }
         )
     }
@@ -118,6 +119,7 @@ class FilmsRepositoryImpl @Inject constructor(
                         }
                         // inserting recommendations
                         recommendationDao.insertRecommendationList(recommendationEntityList)
+                        recommendationEntityList.size
                     }
             }
         )
