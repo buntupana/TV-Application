@@ -19,12 +19,13 @@
             android:id="@+id/appBar"
             android:layout_width="match_parent"
             android:layout_height="280dp"
-            android:fitsSystemWindows="true"
-            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+            android:theme="@style/ThemeOverlay.AppCompat.Light">
 
             <com.google.android.material.appbar.CollapsingToolbarLayout
                 android:id="@+id/collapsing_toolbar"
                 android:layout_width="match_parent"
+                app:titleEnabled="false"
+                android:fitsSystemWindows="true"
                 android:layout_height="wrap_content"
                 app:contentScrim="@color/white"
                 app:layout_scrollFlags="scroll|snap|exitUntilCollapsed">
@@ -37,6 +38,9 @@
 
                 <androidx.appcompat.widget.Toolbar
                     android:id="@+id/toolbar_detail"
+                    app:titleTextColor="@color/icon_default"
+                    app:layout_collapseMode="pin"
+                    app:title=""
                     android:layout_width="match_parent"
                     android:layout_height="?attr/actionBarSize" />
 
@@ -187,18 +191,6 @@
             android:src="@{viewModel.filmViewEntity.favourite ? @drawable/ic_baseline_favorite_24 : @drawable/ic_baseline_favorite_border_24}"
             app:layout_anchor="@id/appBar"
             app:layout_anchorGravity="end|bottom" />
-
-        <!--                <com.google.android.material.floatingactionbutton.FloatingActionButton-->
-        <!--                    android:layout_width="wrap_content"-->
-        <!--                    android:layout_height="wrap_content"-->
-        <!--                    android:layout_marginEnd="24dp"-->
-        <!--                    android:baselineAlignBottom="false"-->
-        <!--                    android:clickable="true"-->
-        <!--                    android:focusable="true"-->
-        <!--                    android:src="@drawable/ic_baseline_favorite_24"-->
-        <!--                    app:fabSize="normal"-->
-        <!--                    app:layout_anchor="@id/appBar"-->
-        <!--                    app:layout_anchorGravity="end|bottom" />-->
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </layout>

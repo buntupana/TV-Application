@@ -15,9 +15,11 @@ import com.buntupana.tv_application.databinding.FragmentDetailBinding
 import com.buntupana.tv_application.databinding.ItemRecommendationBinding
 import com.buntupana.tv_application.domain.entities.Resource
 import com.buntupana.tv_application.presentation.common.SimpleListBindingAdapter
+import com.google.android.material.appbar.AppBarLayout
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
 import javax.inject.Inject
+import kotlin.math.abs
 
 @AndroidEntryPoint
 class DetailFragment : Fragment(),
@@ -57,6 +59,8 @@ class DetailFragment : Fragment(),
         recommendationsAdapter.listener = this
         binding.recyclerRecommendations.adapter = recommendationsAdapter
 
+        enableCollapsingBehaviour()
+
         return binding.root
     }
 
@@ -87,5 +91,24 @@ class DetailFragment : Fragment(),
     override fun onItemClick(binding: ItemRecommendationBinding, position: Int) {
         val filmId = viewModel.getRecommendationId(position)
         findNavController().navigate(DetailFragmentDirections.actionDetailFragmentSelf(filmId))
+    }
+
+    /**
+     * When [AppBarLayout] is collapsed the title will be visible and the favourite will be gone
+     * vice versa happens when is expanded
+     */
+    private fun enableCollapsingBehaviour() {
+        binding.appBar.addOnOffsetChangedListener(AppBarLayout.OnOffsetChangedListener { _, verticalOffset ->
+            val percentage =
+                (binding.appBar.totalScrollRange - abs(verticalOffset).toFloat()) / binding.appBar.totalScrollRange
+
+            when {
+                percentage > 0.5f -> binding.imageFavourite.visibility = View.VISIBLE
+                percentage < 0.1f -> binding.toolbarDetail.title =
+                    viewModel.filmViewEntity.value?.title ?: ""
+                percentage < 0.3f -> binding.imageFavourite.visibility = View.GONE
+                percentage > 0.3f -> binding.toolbarDetail.title = ""
+            }
+        })
     }
 }
