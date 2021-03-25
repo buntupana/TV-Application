@@ -5,6 +5,7 @@
 
     <string name="message_error_connection">Network error, try again</string>
     <string name="message_no_matches">Not matches with that text</string>
+    <string name="message_no_film_data">Sorry, there is no data to show</string>
 
     <string name="menu_item_films">Films</string>
     <string name="menu_item_favourites">Favourites</string>

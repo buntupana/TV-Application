@@ -49,7 +49,8 @@ class HomeFragment : Fragment() {
         } else {
             binding.bottomNavigationView.getOrCreateBadge(R.id.action_favourites)
                 .apply {
-                    backgroundColor = ContextCompat.getColor(requireContext(), R.color.purple_500)
+                    backgroundColor =
+                        ContextCompat.getColor(requireContext(), R.color.forest_green)
                     if (number != count) {
                         number = count
                     }

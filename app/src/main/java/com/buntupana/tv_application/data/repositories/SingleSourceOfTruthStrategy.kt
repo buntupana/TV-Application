@@ -21,19 +21,16 @@ fun <T, A> resultLiveData(
 ): LiveData<Resource<T>> =
     liveData(Dispatchers.IO) {
 
+        emit(Resource.Loading())
         var networkLoading = true
         var data: T? = null
 
         val source = databaseQuery.invoke().map {
-            if (it == null) {
-                Resource.Loading()
-            } else {
-                data = it
-                Resource.Success<T>(it, networkLoading)
-            }
+            data = it
+            Resource.Success(it, networkLoading)
         }
 
-        emitSource(source)
+        emitSource(source as LiveData<Resource<T>>)
 
         val responseStatus = networkCall.invoke()
         networkLoading = false
@@ -60,19 +57,16 @@ fun <T, A> resultListLiveData(
 ): LiveData<Resource<List<T>>> =
     liveData(Dispatchers.IO) {
 
+        emit(Resource.Loading())
         var networkLoading = true
         var data: List<T>? = null
 
         val source = databaseQuery.invoke().map {
-            if (it.isEmpty() && networkLoading) {
-                Resource.Loading()
-            } else {
-                data = it
-                Resource.Success(it, networkLoading)
-            }
+            data = it
+            Resource.Success(it, networkLoading)
         }
 
-        emitSource(source)
+        emitSource(source as LiveData<Resource<List<T>>>)
 
         val responseStatus = networkCall.invoke()
         networkLoading = false

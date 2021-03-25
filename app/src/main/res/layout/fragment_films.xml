@@ -9,19 +9,21 @@
 
         <variable
             name="viewModel"
-            type="com.buntupana.tv_application.presentation.common.FilmsGenericViewModel" />
+            type="com.buntupana.tv_application.presentation.films.FilmsViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:animateLayoutChanges="true"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
         tools:context=".presentation.films.FilmsFragment">
 
         <ImageView
             android:id="@+id/image_search_box"
             android:layout_width="0dp"
-            android:layout_height="80dp"
+            android:layout_height="60dp"
             android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -49,7 +51,8 @@
             app:layout_constraintBottom_toBottomOf="@+id/image_search_box"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/image_search_box"/>
+            app:layout_constraintTop_toTopOf="@+id/image_search_box"
+            app:searchKey="@={viewModel.searchKey}" />
 
         <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
             android:id="@+id/swipe_refresh"
@@ -90,12 +93,14 @@
             android:textAlignment="center"
             android:textSize="24sp"
             android:textStyle="bold"
+            android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:text="Network error or empty search messages" />
+            tools:text="Network error or empty search messages"
+            tools:visibility="visible" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

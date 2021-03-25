@@ -9,10 +9,20 @@
         android:id="@+id/action_films"
         android:name="com.buntupana.tv_application.presentation.films.FilmsFragment"
         android:label="fragment_films"
-        tools:layout="@layout/fragment_films" />
+        tools:layout="@layout/fragment_films" >
+        <argument
+            android:name="typeScreen"
+            app:argType="com.buntupana.tv_application.presentation.films.FilmsViewModel$TypeScreen"
+            android:defaultValue="FILMS" />
+    </fragment>
     <fragment
         android:id="@+id/action_favourites"
-        android:name="com.buntupana.tv_application.presentation.favourites.FavouritesFragment"
+        android:name="com.buntupana.tv_application.presentation.films.FilmsFragment"
         android:label="fragment_favourites"
-        tools:layout="@layout/fragment_favourites" />
+        tools:layout="@layout/fragment_films" >
+        <argument
+            android:name="typeScreen"
+            app:argType="com.buntupana.tv_application.presentation.films.FilmsViewModel$TypeScreen"
+            android:defaultValue="FAVOURITES" />
+    </fragment>
 </navigation>

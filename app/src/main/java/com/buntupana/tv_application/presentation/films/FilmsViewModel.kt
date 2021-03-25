@@ -1,90 +1,121 @@
 package com.buntupana.tv_application.presentation.films
 
-import androidx.arch.core.util.Function
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.map
+import androidx.lifecycle.*
+import com.buntupana.tv_application.R
 import com.buntupana.tv_application.domain.entities.Film
 import com.buntupana.tv_application.domain.entities.Resource
+import com.buntupana.tv_application.domain.usecases.GetFavouriteFilmListUseCase
 import com.buntupana.tv_application.domain.usecases.GetFilmListUseCase
 import com.buntupana.tv_application.domain.usecases.SetFavouriteParameters
 import com.buntupana.tv_application.domain.usecases.SetFavouriteUseCase
-import com.buntupana.tv_application.presentation.common.FilmEntityView
-import com.buntupana.tv_application.presentation.common.FilmsGenericViewModel
-import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedInject
 
-@HiltViewModel
-class FilmsViewModel @Inject constructor(
+class FilmsViewModel @AssistedInject constructor(
     private val getFilmListUseCase: GetFilmListUseCase,
-    private val setFavouriteUseCase: SetFavouriteUseCase
-) : FilmsGenericViewModel() {
+    private val getFavouriteFilmListUseCase: GetFavouriteFilmListUseCase,
+    private val setFavouriteUseCase: SetFavouriteUseCase,
+    @Assisted private val typeScreen: TypeScreen
+) : ViewModel() {
 
+    @dagger.assisted.AssistedFactory
+    interface AssistedFactory {
+        fun create(typeScreen: TypeScreen): FilmsViewModel
+    }
+
+    enum class TypeScreen { FILMS, FAVOURITES }
+
+    var searchKey = ""
     private var filmList: List<Film> = listOf()
+
     val filmViewEntityList: LiveData<Resource<List<FilmEntityView>>>
-    private var _searchKey = ""
+
+    /** Info message to show when there is no results */
+    private val _infoMessage = MutableLiveData(R.string.message_no_matches)
+    val infoMessage: LiveData<Int>
+        get() = _infoMessage
 
     init {
+        filmViewEntityList = when (typeScreen) {
+            TypeScreen.FILMS -> getFilmListUseCase.observe().map { getResource(it) }
+            TypeScreen.FAVOURITES -> getFavouriteFilmListUseCase.observe().map { getResource(it) }
+        }
+        browse(this.searchKey)
+    }
 
-        filmViewEntityList = getFilmListUseCase.observe().map { resource ->
-            when (resource) {
-                is Resource.Error -> {
-                    Resource.Error(resource.exception)
-                }
-                is Resource.Loading -> {
-                    Resource.Loading()
-                }
-                is Resource.Success -> {
-                    filmList = resource.data ?: listOf()
-                    resource.data!!.map { film ->
-                        FilmEntityViewMapper().apply(film)
-                    }.let { filmEntityViewList ->
-                        Resource.Success(filmEntityViewList)
+    companion object {
+        fun provideFactory(
+            assistedFactory: AssistedFactory,
+            typeScreen: TypeScreen
+        ): ViewModelProvider.Factory = object : ViewModelProvider.Factory{
+            override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+                return assistedFactory.create(typeScreen) as T
+            }
+
+        }
+    }
+
+    private fun getResource(resource: Resource<List<Film>>): Resource<List<FilmEntityView>> {
+        return when (resource) {
+            is Resource.Error -> {
+                Resource.Error(resource.exception)
+            }
+            is Resource.Loading -> {
+                Resource.Loading()
+            }
+            is Resource.Success -> {
+                filmList = resource.data ?: listOf()
+                // mapping film to filmEntityView
+                resource.data!!.map { film ->
+                    val imageResource = when(typeScreen){
+                        TypeScreen.FILMS -> film.coverResource
+                        TypeScreen.FAVOURITES -> film.slideShowResource
                     }
+                    FilmEntityViewMapper(imageResource).apply(film)
+                }.let { filmEntityViewList ->
+                    Resource.Success(filmEntityViewList)
                 }
             }
         }
-
-        browse(_searchKey)
     }
 
-    override fun browse(searchKey: String) {
-        _searchKey = searchKey
-        getFilmListUseCase.execute(_searchKey)
+
+    fun browse(searchKey: String) {
+        this.searchKey = searchKey
+        when (typeScreen) {
+            TypeScreen.FILMS -> getFilmListUseCase(this.searchKey)
+            TypeScreen.FAVOURITES -> getFavouriteFilmListUseCase(this.searchKey)
+        }
     }
 
+    /** set or un-set favourite film*/
     fun setFavourite(favourite: Boolean, position: Int) {
         filmList[position].let { film ->
             setFavouriteUseCase(SetFavouriteParameters(film.filmId, favourite))
         }
     }
 
-    class FilmEntityViewMapper : Function<Film, FilmEntityView> {
-        override fun apply(input: Film): FilmEntityView {
+    /** set */
+    fun setInfoAsNoMatchesFound() {
+        _infoMessage.value = R.string.message_no_matches
+    }
 
-            var durationMin: Int = (input.duration / 1000 / 60).toInt()
-            val durationHours: Int = durationMin / 60
-            do {
-                durationMin -= 60
-            } while (durationMin >= 60)
-            var categories = ""
-            input.categoryList.forEachIndexed { index, category ->
-                categories += if (index == 0) {
-                    category.name
-                } else {
-                    ", ${category.name}"
-                }
-            }
+    fun setInfoNetWorkProblem() {
+        _infoMessage.value = R.string.message_error_connection
+    }
 
-            return FilmEntityView(
-                input.filmId,
-                input.coverResource,
-                input.title,
-                input.year,
-                durationHours,
-                durationMin,
-                categories,
-                input.favourite
-            )
-        }
+    fun setInfoNoData() {
+        _infoMessage.value = R.string.message_no_film_data
     }
 }
+
+data class FilmEntityView(
+    val id: String,
+    val imageSrc: String,
+    val title: String,
+    val year: Int,
+    val durationHours: Int,
+    val durationMin: Int,
+    val categories: String,
+    val favourite: Boolean
+)

@@ -7,6 +7,13 @@
     android:layout_height="match_parent"
     tools:context=".presentation.home.HomeFragment">
 
+    <include
+        android:id="@+id/toolbar"
+        layout="@layout/bar_logo"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/nav_home_menu_host_fragment"
         android:name="androidx.navigation.fragment.NavHostFragment"
@@ -16,7 +23,7 @@
         app:layout_constraintBottom_toTopOf="@+id/bottomNavigationView"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar"
         app:navGraph="@navigation/nav_home_menu"
         tools:layout_conversion_absoluteHeight="0dp"
         tools:layout_conversion_absoluteWidth="0dp" />
@@ -26,7 +33,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:clipChildren="false"
-        app:labelVisibilityMode="labeled"
+        app:labelVisibilityMode="unlabeled"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
