@@ -48,6 +48,7 @@ class DetailViewModel @AssistedInject constructor(
     private var recommendationList = listOf<Recommendation>()
 
     init {
+        // observing film results
         filmResourceState = getFilmUseCase.observe().map { resource ->
             when (resource) {
                 is Resource.Error -> {
@@ -55,11 +56,17 @@ class DetailViewModel @AssistedInject constructor(
                 }
                 is Resource.Loading -> Resource.Loading()
                 is Resource.Success -> {
-                    _filmViewEntity.value = FilmViewEntityMapper().apply(resource.data!!)
-                    Resource.Success(Unit)
+                    if (resource.data == null) {
+                        Resource.Error(resource.exception)
+                    } else {
+                        _filmViewEntity.value = FilmViewEntityMapper().apply(resource.data)
+                        Resource.Success(Unit)
+                    }
                 }
             }
         }
+
+        // observing recommendations results
         recommendationResource = getRecommendationListUseCase.observe().map { resource ->
             when (resource) {
                 is Resource.Error -> Resource.Error(resource.exception)
@@ -74,6 +81,11 @@ class DetailViewModel @AssistedInject constructor(
             }
         }
 
+        getFilmUseCase(filmId)
+        getRecommendationListUseCase(filmId)
+    }
+
+    fun retry() {
         getFilmUseCase(filmId)
         getRecommendationListUseCase(filmId)
     }

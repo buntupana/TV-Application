@@ -20,8 +20,8 @@ class GetFilmListUseCase @Inject constructor(
 
         // When searchKey is blank we'll launch a network call
         if (searchKey.isBlank()) {
-            val source = filmRepository.getFilmList()
             result.removeSource(source)
+            source = filmRepository.getFilmList()
             result.addSource(source) { resource ->
                 when (resource) {
                     is Resource.Error -> {
@@ -31,13 +31,13 @@ class GetFilmListUseCase @Inject constructor(
                     is Resource.Success -> {
                         filmList = resource.data ?: listOf()
                         // it will post the filter list with the given string when table is uploaded
-                        result.postValue(Resource.Success(filterCustomers()))
+                        result.postValue(Resource.Success(filterFilms()))
                     }
                 }
             }
         } else {
             // when we already have a searchKey it will filter with the list we already
-            result.postValue(Resource.Success(filterCustomers()))
+            result.postValue(Resource.Success(filterFilms()))
         }
     }
 
@@ -46,7 +46,7 @@ class GetFilmListUseCase @Inject constructor(
      * in their title the given search key
      * @return a customer list
      */
-    private fun filterCustomers(): List<Film> {
+    private fun filterFilms(): List<Film> {
         Timber.d("filterCustomers() called")
         return filmList.filter { customer ->
             customer.title.contains(searchKey, true)

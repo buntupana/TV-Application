@@ -11,4 +11,6 @@
     <string name="menu_item_favourites">Favourites</string>
 
     <string name="text_film_year_duration">%1$d – %2$dh %3$dmin</string>
+
+    <string name="button_retry">Retry</string>
 </resources>

@@ -6,12 +6,12 @@ import javax.inject.Inject
 
 class GetFilmUseCase @Inject constructor(
     private val filmRepository: FilmRepository
-) : MediatorEventUseCase<String, Film>() {
+) : MediatorEventUseCase<String, Film?>() {
 
     override fun execute(parameters: String) {
 
-        val source = filmRepository.getFilm(parameters)
         result.removeSource(source)
+        source = filmRepository.getFilm(parameters)
         result.addSource(source) { resource ->
             result.postValue(resource)
         }

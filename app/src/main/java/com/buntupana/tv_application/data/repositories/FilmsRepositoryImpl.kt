@@ -96,11 +96,11 @@ class FilmsRepositoryImpl @Inject constructor(
         return resultListLiveData(
             databaseQuery = {
                 filmDao.getFilmWithRecommendations(filmId).map { filmWithRecommendations ->
-                    filmWithRecommendations.recommendationList.map { recommendationEntity ->
+                    filmWithRecommendations?.recommendationList?.map { recommendationEntity ->
                         RecommendationModelMapper(urlProvider.getImageSourceBaseUrl()).apply(
                             recommendationEntity
                         )
-                    }
+                    } ?: listOf()
                 }
             },
             networkCall = { filmRemoteDataSource.fetchRecommendationList(filmId) },
@@ -127,17 +127,21 @@ class FilmsRepositoryImpl @Inject constructor(
         return favouriteDao.getFavouriteCount()
     }
 
-    override fun getFilm(filmId: String): LiveData<Resource<Film>> {
+    override fun getFilm(filmId: String): LiveData<Resource<Film?>> {
         return resultLiveData(
             databaseQuery = {
                 filmDao.getFilm(filmId).map { filmAndFavouriteAndCategories ->
-                    FilmModelMapper(
-                        filmAndFavouriteAndCategories.favourite,
-                        filmAndFavouriteAndCategories.categoryList,
-                        urlProvider.getImageSourceBaseUrl()
-                    ).apply(
-                        filmAndFavouriteAndCategories.film
-                    )
+                    if (filmAndFavouriteAndCategories == null) {
+                        null
+                    } else {
+                        FilmModelMapper(
+                            filmAndFavouriteAndCategories.favourite,
+                            filmAndFavouriteAndCategories.categoryList,
+                            urlProvider.getImageSourceBaseUrl()
+                        ).apply(
+                            filmAndFavouriteAndCategories.film
+                        )
+                    }
                 }
             },
             networkCall = { filmRemoteDataSource.fetchFilm(filmId) },

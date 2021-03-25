@@ -15,22 +15,25 @@ import kotlinx.coroutines.Dispatchers
  * [Resource.Loading]
  */
 fun <T, A> resultLiveData(
-    databaseQuery: suspend () -> LiveData<T>,
+    databaseQuery: () -> LiveData<T>,
     networkCall: suspend () -> Resource<A>,
     saveCallResult: suspend (A) -> Unit
 ): LiveData<Resource<T>> =
     liveData(Dispatchers.IO) {
-
         emit(Resource.Loading())
         var networkLoading = true
         var data: T? = null
 
         val source = databaseQuery.invoke().map {
-            data = it
-            Resource.Success(it, networkLoading)
+            if (it == null) {
+                Resource.Loading()
+            } else {
+                data = it
+                Resource.Success<T>(it, networkLoading)
+            }
         }
 
-        emitSource(source as LiveData<Resource<T>>)
+        emitSource(source)
 
         val responseStatus = networkCall.invoke()
         networkLoading = false
@@ -51,7 +54,7 @@ fun <T, A> resultLiveData(
  * [Resource.Loading]
  */
 fun <T, A> resultListLiveData(
-    databaseQuery: suspend () -> LiveData<List<T>>,
+    databaseQuery: () -> LiveData<List<T>>,
     networkCall: suspend () -> Resource<A>,
     saveCallResult: suspend (A) -> Unit
 ): LiveData<Resource<List<T>>> =
@@ -62,11 +65,15 @@ fun <T, A> resultListLiveData(
         var data: List<T>? = null
 
         val source = databaseQuery.invoke().map {
-            data = it
-            Resource.Success(it, networkLoading)
+            if (it.isEmpty() && networkLoading) {
+                Resource.Loading()
+            } else {
+                data = it
+                Resource.Success(it, networkLoading)
+            }
         }
 
-        emitSource(source as LiveData<Resource<List<T>>>)
+        emitSource(source)
 
         val responseStatus = networkCall.invoke()
         networkLoading = false

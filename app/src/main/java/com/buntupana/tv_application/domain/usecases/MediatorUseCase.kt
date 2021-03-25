@@ -1,6 +1,8 @@
 package com.buntupana.tv_application.domain.usecases
 
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
+import androidx.lifecycle.MutableLiveData
 import com.buntupana.tv_application.core.MediatorLiveEvent
 import com.buntupana.tv_application.domain.entities.Resource
 
@@ -10,7 +12,7 @@ import com.buntupana.tv_application.domain.entities.Resource
  * Handling an exception (emit [Resource.Error] to the result) is the subclasses's responsibility.
  */
 abstract class MediatorUseCase<in P, R> {
-
+    protected var source : LiveData<Resource<R>> = MutableLiveData(null)
     protected val result = MediatorLiveData<Resource<R>>()
 
     // Make this as open so that mock instances can mock this method
@@ -25,7 +27,7 @@ abstract class MediatorUseCase<in P, R> {
 }
 
 abstract class MediatorEventUseCase<in P, R> {
-
+    protected var source : LiveData<Resource<R>> = MutableLiveData(null)
     protected val result = MediatorLiveEvent<Resource<R>>()
 
     // Make this as open so that mock instances can mock this method

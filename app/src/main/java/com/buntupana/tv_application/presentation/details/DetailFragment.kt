@@ -52,6 +52,10 @@ class DetailFragment : Fragment(),
             viewModel.changeFavourite()
         }
 
+        binding.buttonRetry.setOnClickListener {
+            viewModel.retry()
+        }
+
         LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false).let {
             binding.recyclerRecommendations.layoutManager = it
         }
@@ -72,7 +76,39 @@ class DetailFragment : Fragment(),
     }
 
     private fun setupObservers() {
-        viewModel.filmResourceState.observe(viewLifecycleOwner) {}
+        viewModel.filmResourceState.observe(viewLifecycleOwner) { resource ->
+
+            when (resource) {
+                is Resource.Error -> {
+                    Timber.e(resource.exception)
+                    // if there is an error with no data we'll show the button retry
+                    if (viewModel.filmViewEntity.value == null) {
+                        binding.layoutLoading.visibility = View.VISIBLE
+                        binding.progressBar.visibility = View.GONE
+                        binding.textError.visibility = View.VISIBLE
+                        binding.buttonRetry.visibility = View.VISIBLE
+                    }
+                }
+                is Resource.Loading -> {
+                    // when loading and no data we'll show loading
+                    if (viewModel.filmViewEntity.value == null) {
+                        binding.layoutLoading.visibility = View.VISIBLE
+                        binding.progressBar.visibility = View.VISIBLE
+                        binding.textError.visibility = View.GONE
+                        binding.buttonRetry.visibility = View.GONE
+                    }
+                }
+                is Resource.Success -> {
+                    // when result is success and there is data we'll show the info
+                    if (viewModel.filmViewEntity.value != null) {
+                        binding.layoutLoading.visibility = View.GONE
+                        binding.progressBar.visibility = View.GONE
+                        binding.textError.visibility = View.GONE
+                        binding.buttonRetry.visibility = View.GONE
+                    }
+                }
+            }
+        }
         viewModel.recommendationResource.observe(viewLifecycleOwner) { resource ->
             Timber.d("setupObservers: recommendations result $resource")
             when (resource) {

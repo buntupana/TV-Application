@@ -10,8 +10,8 @@ class GetRecommendationListUseCase @Inject constructor(
 
     override fun execute(parameters: String) {
 
-        val source = filmRepository.getRecommendationList(parameters)
         result.removeSource(source)
+        source = filmRepository.getRecommendationList(parameters)
         result.addSource(source) { resource ->
             result.postValue(resource)
         }

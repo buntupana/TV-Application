@@ -7,7 +7,7 @@ import com.buntupana.tv_application.domain.entities.Resource
 
 interface FilmRepository {
 
-    fun getFilm(filmId: String): LiveData<Resource<Film>>
+    fun getFilm(filmId: String): LiveData<Resource<Film?>>
 
     fun getFilmList(): LiveData<Resource<List<Film>>>
 
