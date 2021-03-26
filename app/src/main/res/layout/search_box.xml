@@ -30,6 +30,7 @@
             android:layout_width="match_parent"
             android:layout_height="40dp"
             android:ems="10"
+            android:text="@{searchKey}"
             android:hint="@string/search_film_hint"
             android:imeOptions="actionDone"
             android:importantForAutofill="no"

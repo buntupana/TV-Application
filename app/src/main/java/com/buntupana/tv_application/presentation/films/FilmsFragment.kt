@@ -76,7 +76,7 @@ class FilmsFragment : Fragment(), FilmListBindingAdapter.OnFilmItemClickListener
         }
 
         binding.swipeRefresh.setOnRefreshListener {
-            viewModel.browse(binding.searchBox.editTextSearchKey.text.toString())
+            viewModel.retry()
         }
 
         return binding.root

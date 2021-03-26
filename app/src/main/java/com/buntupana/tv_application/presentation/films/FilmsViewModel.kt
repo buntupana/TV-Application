@@ -40,7 +40,7 @@ class FilmsViewModel @AssistedInject constructor(
             TypeScreen.FILMS -> getFilmListUseCase.observe().map { getResource(it) }
             TypeScreen.FAVOURITES -> getFavouriteFilmListUseCase.observe().map { getResource(it) }
         }
-        browse(this.searchKey)
+        executeBrowse()
     }
 
     companion object {
@@ -79,9 +79,14 @@ class FilmsViewModel @AssistedInject constructor(
         }
     }
 
-
     fun browse(searchKey: String) {
-        this.searchKey = searchKey
+        if (this.searchKey != searchKey) {
+            this.searchKey = searchKey
+            executeBrowse()
+        }
+    }
+
+    private fun executeBrowse(){
         when (typeScreen) {
             TypeScreen.FILMS -> getFilmListUseCase(this.searchKey)
             TypeScreen.FAVOURITES -> getFavouriteFilmListUseCase(this.searchKey)
@@ -109,6 +114,10 @@ class FilmsViewModel @AssistedInject constructor(
 
     fun setInfoNoData() {
         _infoMessage.value = R.string.message_no_film_data
+    }
+
+    fun retry() {
+        executeBrowse()
     }
 }
 
