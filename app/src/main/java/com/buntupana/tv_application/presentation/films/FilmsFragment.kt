@@ -1,5 +1,6 @@
 package com.buntupana.tv_application.presentation.films
 
+import android.content.res.Configuration
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -25,10 +26,23 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class FilmsFragment : Fragment(), FilmListBindingAdapter.OnFilmItemClickListener {
 
+    companion object {
+        const val TYPE_SCREEN_KEY = "TYPE_SCREEN_KEY"
+        fun getInstance(typeScreen: FilmsViewModel.TypeScreen): FilmsFragment {
+            Timber.d("getInstance: $typeScreen")
+            val args = Bundle().apply {
+                putString(TYPE_SCREEN_KEY, typeScreen.toString())
+            }
+            return FilmsFragment().apply {
+                arguments = args
+            }
+        }
+    }
+
     @Inject
     lateinit var filmsViewModelAssistedFactory: FilmsViewModel.AssistedFactory
     private val viewModel: FilmsViewModel by viewModels {
-        FilmsViewModel.provideFactory(filmsViewModelAssistedFactory, args.typeScreen)
+        FilmsViewModel.provideFactory(filmsViewModelAssistedFactory, typeScreen)
     }
 
     private lateinit var binding: FragmentFilmsBinding
@@ -44,6 +58,21 @@ class FilmsFragment : Fragment(), FilmListBindingAdapter.OnFilmItemClickListener
         Navigation.findNavController(navView)
     }
 
+    private var typeScreen = FilmsViewModel.TypeScreen.FILMS
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        val orientation = resources.configuration.orientation
+        if (orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            arguments?.getString(TYPE_SCREEN_KEY)?.let {
+                typeScreen = FilmsViewModel.TypeScreen.valueOf(it)
+            }
+        } else {
+            typeScreen = args.typeScreen
+        }
+        Timber.d("onCreate: $typeScreen")
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -51,7 +80,7 @@ class FilmsFragment : Fragment(), FilmListBindingAdapter.OnFilmItemClickListener
         binding = FragmentFilmsBinding.inflate(inflater, container, false)
 
         // Depending on the type of screen we'll set differents adapters
-        when (args.typeScreen) {
+        when (typeScreen) {
             FilmsViewModel.TypeScreen.FILMS -> {
                 binding.recyclerFilm.adapter = adapterFilms
                 adapterFilms.listenerFilm = this
@@ -71,8 +100,7 @@ class FilmsFragment : Fragment(), FilmListBindingAdapter.OnFilmItemClickListener
         }
 
         binding.searchBox.editTextSearchKey.doOnTextChanged { searchKey, _, _, _ ->
-            Timber.d("onCreateView() called with: searchKey = [$searchKey]")
-            viewModel.browse(searchKey.toString())
+            browse(searchKey.toString())
         }
 
         binding.swipeRefresh.setOnRefreshListener {
@@ -82,12 +110,17 @@ class FilmsFragment : Fragment(), FilmListBindingAdapter.OnFilmItemClickListener
         return binding.root
     }
 
+    fun browse(searchKey: String) {
+        viewModel.browse(searchKey)
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        viewModel.orientation = resources.configuration.orientation
         binding.viewModel = viewModel
         binding.lifecycleOwner = viewLifecycleOwner
-
+        binding.executePendingBindings()
         setupObservers()
     }
 
@@ -140,7 +173,7 @@ class FilmsFragment : Fragment(), FilmListBindingAdapter.OnFilmItemClickListener
                         } else {
                             binding.textInfoMessage.visibility = View.GONE
                         }
-                        when (args.typeScreen) {
+                        when (typeScreen) {
                             FilmsViewModel.TypeScreen.FILMS -> adapterFilms.submitList(
                                 filmEntityViewList
                             )

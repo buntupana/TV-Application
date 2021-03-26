@@ -7,6 +7,8 @@
 
         <import type="android.view.View" />
 
+        <import type="android.content.res.Configuration" />
+
         <variable
             name="viewModel"
             type="com.buntupana.tv_application.presentation.films.FilmsViewModel" />
@@ -26,6 +28,7 @@
             android:layout_height="60dp"
             android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"
+            android:visibility="@{viewModel.orientation ==Configuration.ORIENTATION_PORTRAIT ? View.VISIBLE : View.GONE }"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -37,6 +40,7 @@
             android:layout_marginStart="16dp"
             android:layout_marginEnd="16dp"
             android:src="@color/divider_color"
+            android:visibility="@{viewModel.orientation ==Configuration.ORIENTATION_PORTRAIT ? View.VISIBLE : View.GONE }"
             app:layout_constraintBottom_toBottomOf="@id/image_search_box"
             app:layout_constraintEnd_toEndOf="@id/image_search_box"
             app:layout_constraintStart_toStartOf="@id/image_search_box" />
@@ -47,8 +51,9 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
+            app:layout_constraintWidth_max="400dp"
             android:layout_marginEnd="16dp"
-            app:layout_constraintBottom_toBottomOf="@+id/image_search_box"
+            android:visibility="@{viewModel.orientation ==Configuration.ORIENTATION_PORTRAIT ? View.VISIBLE : View.GONE }"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/image_search_box"
@@ -66,6 +71,7 @@
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recycler_film"
                 android:layout_width="match_parent"
+                android:paddingHorizontal="@dimen/horizontal_margin"
                 android:layout_height="0dp"
                 app:layoutManager="LinearLayoutManager"
                 tools:listitem="@layout/item_film" />

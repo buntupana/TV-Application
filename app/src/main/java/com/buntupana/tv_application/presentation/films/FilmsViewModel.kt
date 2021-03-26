@@ -1,5 +1,6 @@
 package com.buntupana.tv_application.presentation.films
 
+import android.content.res.Configuration
 import androidx.lifecycle.*
 import com.buntupana.tv_application.R
 import com.buntupana.tv_application.domain.entities.Film
@@ -15,7 +16,7 @@ class FilmsViewModel @AssistedInject constructor(
     private val getFilmListUseCase: GetFilmListUseCase,
     private val getFavouriteFilmListUseCase: GetFavouriteFilmListUseCase,
     private val setFavouriteUseCase: SetFavouriteUseCase,
-    @Assisted private val typeScreen: TypeScreen
+    @Assisted val typeScreen: TypeScreen
 ) : ViewModel() {
 
     @dagger.assisted.AssistedFactory
@@ -34,6 +35,8 @@ class FilmsViewModel @AssistedInject constructor(
     private val _infoMessage = MutableLiveData(R.string.message_no_matches)
     val infoMessage: LiveData<Int>
         get() = _infoMessage
+
+    var orientation = Configuration.ORIENTATION_PORTRAIT
 
     init {
         filmViewEntityList = when (typeScreen) {
@@ -86,7 +89,7 @@ class FilmsViewModel @AssistedInject constructor(
         }
     }
 
-    private fun executeBrowse(){
+    private fun executeBrowse() {
         when (typeScreen) {
             TypeScreen.FILMS -> getFilmListUseCase(this.searchKey)
             TypeScreen.FAVOURITES -> getFavouriteFilmListUseCase(this.searchKey)
