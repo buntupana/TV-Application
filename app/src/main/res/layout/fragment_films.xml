@@ -71,7 +71,7 @@
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recycler_film"
                 android:layout_width="match_parent"
-                android:paddingHorizontal="@dimen/horizontal_margin"
+                android:paddingHorizontal="@dimen/horizontal_margin_recycler"
                 android:layout_height="0dp"
                 app:layoutManager="LinearLayoutManager"
                 tools:listitem="@layout/item_film" />

@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -73,13 +74,12 @@ class HomeFragment : Fragment() {
         if (count == 0) {
             binding.bottomNavigationView?.removeBadge(R.id.action_favourites)
         } else {
-            binding.bottomNavigationView?.getOrCreateBadge(R.id.action_favourites)
-                .apply {
-//                    backgroundColor =
-//                        ContextCompat.getColor(requireContext(), R.color.forest_green)
-//                    if (number != count) {
-//                        number = count
-//                    }
+            binding.bottomNavigationView?.getOrCreateBadge(R.id.action_favourites)?.apply {
+                    backgroundColor =
+                        ContextCompat.getColor(requireContext(), R.color.purple_500)
+                    if (number != count) {
+                        number = count
+                    }
                 }
         }
     }

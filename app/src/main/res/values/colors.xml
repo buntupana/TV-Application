@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <color name="primary">@color/yellow_200</color>
+    <color name="primary">@color/purple_500</color>
 
     <color name="colorOnPrimary">@color/white</color>
 
@@ -12,6 +12,9 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="yellow_300">#fbba00</color>
+
+    <color name="favourite">@color/yellow_300</color>
 
     <color name="forest_green">#1b4f40</color>
 
@@ -20,5 +23,4 @@
 
     <color name="divider_color">#666666</color>
 
-    <color name="yellow_200">#fbba00</color>
 </resources>
