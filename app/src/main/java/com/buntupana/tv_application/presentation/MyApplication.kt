@@ -1,6 +1,7 @@
-package com.buntupana.tv_application
+package com.buntupana.tv_application.presentation
 
 import android.app.Application
+import com.buntupana.tv_application.BuildConfig
 import dagger.hilt.android.HiltAndroidApp
 import timber.log.Timber
 
