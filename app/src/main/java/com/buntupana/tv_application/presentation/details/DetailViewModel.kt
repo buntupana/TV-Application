@@ -90,6 +90,10 @@ class DetailViewModel @AssistedInject constructor(
         getRecommendationListUseCase(filmId)
     }
 
+    fun retryRecommendations(){
+        getRecommendationListUseCase(filmId)
+    }
+
     fun getRecommendationId(position: Int): String {
         return recommendationList[position].recommendationId
     }

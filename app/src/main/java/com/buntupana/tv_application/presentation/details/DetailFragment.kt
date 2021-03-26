@@ -56,6 +56,12 @@ class DetailFragment : Fragment(),
             viewModel.retry()
         }
 
+        binding.buttonRecommendationRetry.setOnClickListener {
+            viewModel.retryRecommendations()
+        }
+
+        binding.recyclerRecommendations.isNestedScrollingEnabled = false
+
         LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false).let {
             binding.recyclerRecommendations.layoutManager = it
         }
