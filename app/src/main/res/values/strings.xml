@@ -1,3 +1,21 @@
 <resources>
-    <string name="app_name">TV-Application</string>
+    <string name="app_name" translatable="false">Film App</string>
+
+    <string name="screenTitleFilms">Films</string>
+    <string name="screenTitleFavourites">Favourites</string>
+
+    <string name="search_film_hint">Search Film</string>
+
+    <string name="message_error_connection">Network error, try again</string>
+    <string name="message_error_connection_swipe">Network error, swipe down to retry</string>
+    <string name="message_no_matches">Not matches with that text</string>
+    <string name="message_no_film_data">Sorry, there is no data to show</string>
+
+    <string name="menu_item_films">Films</string>
+    <string name="menu_item_favourites">Favourites</string>
+
+    <string name="text_film_year_duration">%1$d – %2$dh %3$dmin</string>
+    <string name="text_recommendations">More Like This</string>
+
+    <string name="button_retry">Retry</string>
 </resources>
